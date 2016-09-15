@@ -2,7 +2,7 @@
 
 Boilerplate Removal and Fulltext Extraction from HTML pages.
 
-Implementation of [https://github.com/kohlschutter/boilerpipe]() in PHP.
+Partial implementation of [https://github.com/kohlschutter/boilerpipe]() in PHP.
 
 ## Example
 
