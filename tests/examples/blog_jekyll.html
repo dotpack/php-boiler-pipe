@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <link href="http://gmpg.org/xfn/11" rel="profile">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>
+
+        Mirroring a website with Bashew and GitHub Actions &middot; Peter Forret
+
+    </title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/public/css/poole.css">
+    <link rel="stylesheet" href="/public/css/syntax.css">
+    <link rel="stylesheet" href="/public/css/hyde.css">
+    <link rel="stylesheet" href="/public/fonts.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+    <script src="/public/js/d8573aff57.js"></script>
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon.png">
+    <link rel="shortcut icon" href="/public/favicon.ico">
+
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+    <title>Mirroring a website with Bashew and GitHub Actions | Peter Forret</title>
+    <meta name="generator" content="Jekyll v3.9.5"/>
+    <meta property="og:title" content="Mirroring a website with Bashew and GitHub Actions"/>
+    <meta name="author" content="Peter Forret"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta name="description"
+          content="TL;DR: I decided to mirror the installation scripts for Unifi network controllers on GitHub using Bashew and GitHub Actions. Skip to the here marker to see the steps."/>
+    <meta property="og:description"
+          content="TL;DR: I decided to mirror the installation scripts for Unifi network controllers on GitHub using Bashew and GitHub Actions. Skip to the here marker to see the steps."/>
+    <link rel="canonical" href="https://blog.forret.com/2024/05/19/unifi-mirror-bashew-github/"/>
+    <meta property="og:url" content="https://blog.forret.com/2024/05/19/unifi-mirror-bashew-github/"/>
+    <meta property="og:site_name" content="Peter Forret"/>
+    <meta property="og:image" content="https://github.com/pforret/glennr-unifi/raw/main/assets/logo.jpg"/>
+    <meta property="og:type" content="article"/>
+    <meta property="article:published_time" content="2024-05-19T00:00:00+00:00"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta property="twitter:image" content="https://github.com/pforret/glennr-unifi/raw/main/assets/logo.jpg"/>
+    <meta property="twitter:title" content="Mirroring a website with Bashew and GitHub Actions"/>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "author": {
+                "@type": "Person",
+                "name": "Peter Forret",
+                "url": "https://twitter.com/pforret"
+            },
+            "dateModified": "2024-05-19T00:00:00+00:00",
+            "datePublished": "2024-05-19T00:00:00+00:00",
+            "description": "TL;DR: I decided to mirror the installation scripts for Unifi network controllers on GitHub using Bashew and GitHub Actions. Skip to the here marker to see the steps.",
+            "headline": "Mirroring a website with Bashew and GitHub Actions",
+            "image": "https://github.com/pforret/glennr-unifi/raw/main/assets/logo.jpg",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.forret.com/2024/05/19/unifi-mirror-bashew-github/"
+            },
+            "url": "https://blog.forret.com/2024/05/19/unifi-mirror-bashew-github/"
+        }</script>
+    <!-- End Jekyll SEO tag -->
+
+</head>
+
+
+<body>
+
+<div class="sidebar" xmlns="http://www.w3.org/1999/html">
+    <div class="container sidebar-sticky">
+        <div class="sidebar-about">
+            <h1><img height="40" src="/public/apple-touch-icon.png" class="title-icon" alt="blog.forret.com"> <a
+                    href="/"> Peter Forret</a></h1>
+            <p class="lead">because eloquence is, like, whatever</p>
+            <p style="font-size: .75em">
+                <i class="fas fa-user-alt"></i> <a href="/about/">About</a>
+                <i class="fas fa-tag"></i> <a href="/category/">Categories</a>
+                <i class="fas fa-search"></i> <a href="/search/">Search</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<div class="content container">
+    <a href="#" id="content"></a>
+    <div class="post">
+        <h1 class="post-title">Mirroring a website with Bashew and GitHub Actions</h1>
+        <span class="post-date">19 May 2024</span>
+        <blockquote>
+            <p>TL;DR: I decided to <a href="https://github.com/pforret/glennr-unifi">mirror the installation scripts for
+                Unifi network controllers</a> on GitHub using Bashew and GitHub Actions. Skip to the <a
+                    href="#here"><code class="language-plaintext highlighter-rouge">here</code> marker</a> to see the
+                steps.</p>
+        </blockquote>
+
+        <p><a href="https://github.com/pforret/glennr-unifi"><img
+                src="https://github.com/pforret/glennr-unifi/raw/main/assets/logo.jpg" alt=""/></a></p>
+
+        <p>I recently upgraded my Ubiquiti Wi-Fi installation to the Cloud Key Gen 2. The old Cloud Key 1 was obsolete,
+            and I was no longer able to manage the settings of my home Wi-Fi network. I had thought the upgrade would be
+            straightforward, but the Cloud Key ships without a power supply, and doesn’t accept just any USB power. It
+            needs to be QuickCharge compatible. The first one I ordered was high power (2A) but I found out that’s not
+            the same as QuickCharge.</p>
+
+        <blockquote>
+            <p>Quick Charge is a proprietary technology that can charge battery-powered devices, primarily mobile
+                phones, at power levels exceeding the 7.5 watts (5 volts at 1.5 amps) supported by the USB BC 1.2
+                standard, using existing USB cables. (…) Quick Charge requires both the power supply and the device
+                being charged to support it, otherwise charging falls back to the standard USB ten watts.
+                • via <a href="https://en.wikipedia.org/wiki/Quick_Charge">Wikipedia</a></p>
+        </blockquote>
+
+        <p>Since I had to wait for the second power supply to arrive, I investigated what other ways there would be to
+            manage my Unifi network. There are some hosted controllers SaaS options:</p>
+
+        <ul>
+            <li>
+                <a href="https://eu.store.ui.com/eu/en/collections/unifi-accessory-tech-hosting-and-gateways-cloud/products/unifi-hosting">Ubiquiti</a>:
+                &gt; 29€/mon
+            </li>
+            <li><a href="https://www.hostifi.com/#pricing">Hostify</a>: &gt; 99$/mon</li>
+            <li><a href="https://www.unihosted.com/#pricing">Unihosting</a>: free for 1 site and &lt;= 5 devices).</li>
+        </ul>
+
+        <p>But I had already purchased the Cloud Key Gen 2, and I didn’t want to pay a monthly fee.
+            Then I considered using a Raspberry Pi to create a controller, the pure DIY route. I had a Raspberry Pi 3B+
+            lying around, and I could use it to run the controller software.</p>
+
+        <p>It struck me how amateuristic the <a
+                href="https://community.ui.com/questions/UniFi-Installation-Scripts-or-UniFi-Easy-Update-Script-or-UniFi-Lets-Encrypt-or-UniFi-Easy-Encrypt-/ccbc7530-dd61-40a7-82ec-22b17f027776">DIY
+            part of the Ubiquiti Unifi ecosystem</a> was. There are installation scripts available, but they are not
+            maintained by Ubiquiti. They are developed by Glenn Rietveld (from the Netherlands, I think he’s a Ubiquiti
+            employee), and it’s not hosted on GitHub, but on his personal website <a href="https://glennr.nl/scripts">glennr.nl</a>.
+            No versioning, no deltas, no history.</p>
+
+        <p>I thought that was odd, and I decided to mirror the scripts on GitHub, for science and to check how fast I
+            could do it with a <a href="https://github.com/pforret/bashew">bashew</a> bash script.</p>
+
+        <h2 id="creating-a-mirroring-script-pforretglennr-unifi"><a name="here"
+                                                                    href="https://github.com/pforret/glennr-unifi">Creating
+            a mirroring script: pforret/glennr-unifi</a></h2>
+
+        <h3 id="1-create-the-script-template">1. create the script template</h3>
+
+        <p>I start by creating a new script with <code class="language-plaintext highlighter-rouge">bashew script</code>:
+        </p>
+
+        <div class="language-plaintext highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code>⏳  1. first we need the information of the author
+Author full name         (pforret) &gt; Peter Forret
+Author email             (peter@forret.com) &gt; peter@forret.com
+Author (github) username (pforret) &gt; 
+⏳  2. now we need the path and name of this new script/repo
+Script name (./edifies_endorse.sh) &gt; glennr-unifi.sh
+⏳  3. give some description of what the script should do
+Script description (This is my script glennr-unifi) &gt; sync all scripts from glennr.nl
+⏳  Creating script glennr-unifi.sh ...
+glennr-unifi.sh
+</code></pre>
+            </div>
+        </div>
+
+        <p>Just like that, the script already has the following functionality:</p>
+
+        <div class="language-plaintext highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code>Program : glennr-unifi.sh  by peter@forret.com
+Version : v0.0.1 (May 19 15:12:54 2024)
+Purpose : sync all scripts from glennr.nl
+Usage   : glennr-unifi.sh [-h] [-Q] [-V] [-f] [-L &lt;LOG_DIR&gt;] [-T &lt;TMP_DIR&gt;] &lt;action&gt; &lt;input?&gt;
+Flags, options and parameters:
+-h|--help        : [flag] show usage [default: off]
+-Q|--QUIET       : [flag] no output [default: off]
+-V|--VERBOSE     : [flag] also show debug messages [default: off]
+-f|--FORCE       : [flag] do not ask for confirmation (always yes) [default: off]
+-L|--LOG_DIR &lt;?&gt; : [option] folder for log files   [default: /Users/pforret/log/glennr-unifi]
+-T|--TMP_DIR &lt;?&gt; : [option] folder for temp files  [default: /tmp/glennr-unifi]
+&lt;action&gt;         : [choice] action to perform  [options: action1,action2,check,env,update]
+&lt;input&gt;          : [parameter] input file/text (optional)
+</code></pre>
+            </div>
+        </div>
+        <p>Now I open the script for editing (I use PHPStorm) and</p>
+
+        <ul>
+            <li>I replace all occurrences of ‘action1’ with ‘get’</li>
+            <li>remove all mentions of action2, since I won’t need them</li>
+            <li>also remove the &lt;input&gt; parameter, since I don’t need it</li>
+        </ul>
+
+        <p>This gives me the usage I expected:</p>
+        <div class="language-bash highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code>Usage   : glennr-unifi.sh <span class="o">[</span><span
+                    class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-Q</span><span
+                    class="o">]</span> <span class="o">[</span><span class="nt">-V</span><span class="o">]</span> <span
+                    class="o">[</span><span class="nt">-F</span><span class="o">]</span> <span class="o">[</span><span
+                    class="nt">-L</span> &lt;LOG_DIR&gt;] <span class="o">[</span><span class="nt">-T</span> &lt;TMP_DIR&gt;] &lt;action&gt;
+Flags, options and parameters:
+<span class="o">(</span>...<span class="o">)</span>
+&lt;action&gt;         : <span class="o">[</span>choice] action to perform  <span class="o">[</span>options: get,check,env,update]
+
+<span class="c">### TIPS &amp; EXAMPLES</span>
+<span class="k">*</span> use glennr-unifi get to get all Unifi scripts from glennr.nl
+  glennr-unifi get
+</code></pre>
+            </div>
+        </div>
+
+        <h3 id="2-add-the-code-to-download-the-scripts">2. add the code to download the scripts</h3>
+
+        <p>There is one page per type of scripts (controller/ video/ ) with all the links to the .sh files. So I need to
+            process each of those 7 pages and download the files.
+            I will use <code class="language-plaintext highlighter-rouge">wget</code> to <em>download</em> the files
+            (<code class="language-plaintext highlighter-rouge">curl</code> would have worked too) to stdout, <code
+                    class="language-plaintext highlighter-rouge">awk</code> to perform a combination of <em>search and
+                parse</em> (could have been a <code class="language-plaintext highlighter-rouge">grep | cut</code> too)
+            and a bash <code class="language-plaintext highlighter-rouge">while read; do</code> loop to <em>extract and
+                download</em> the URLs from the HTML.</p>
+
+        <div class="language-bash highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code><span
+                    class="k">function </span>download_from_glennr<span class="o">()</span> <span class="o">{</span>
+  Os:require <span class="s2">"wget"</span>
+  <span class="nb">local </span><span class="nv">url</span><span class="o">=</span><span class="s2">"</span><span
+                        class="nv">$1</span><span class="s2">"</span>
+  <span class="nb">local </span><span class="nv">folder</span><span class="o">=</span><span class="s2">"</span><span
+                        class="nv">$2</span><span class="s2">"</span>
+  <span class="nb">local </span>file
+  <span class="o">[[</span> <span class="o">!</span> <span class="nt">-d</span> <span class="s2">"</span><span
+                        class="nv">$2</span><span class="s2">"</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span
+                        class="nb">mkdir</span> <span class="nt">-p</span> <span class="s2">"</span><span
+                        class="nv">$2</span><span class="s2">"</span>
+  wget <span class="s2">"</span><span class="nv">$url</span><span class="s2">"</span> <span class="nt">-O</span> - 2&gt;/dev/null |
+    <span class="nb">awk</span> <span class="nt">-F</span><span class="s1">'"'</span> <span class="s1">'/get.glennr.nl/ {print $2}'</span> |
+    <span class="k">while </span><span class="nb">read</span> <span class="nt">-r</span> url<span
+                        class="p">;</span> <span class="k">do
+      </span><span class="nv">file</span><span class="o">=</span><span class="si">$(</span><span
+                        class="nb">basename</span> <span class="s2">"</span><span class="nv">$url</span><span
+                        class="s2">"</span><span class="si">)</span>
+      <span class="o">[[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$file</span><span
+                        class="s2">"</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="k">continue
+      </span>IO:progress <span class="s2">"Download </span><span class="nv">$file</span><span class="s2">"</span>
+      wget <span class="nt">-N</span> <span class="nt">-q</span> <span class="nt">-nd</span> <span
+                        class="s2">"</span><span class="nv">$url</span><span class="s2">"</span> <span
+                        class="nt">-P</span> <span class="s2">"</span><span class="nv">$folder</span><span
+                        class="s2">"</span>
+    <span class="k">done</span>
+<span class="o">}</span>
+<span class="c"># I can then download the pages ones by one like this</span>
+download_from_glennr <span class="s2">"https://glennr.nl/s/unifi-network-controller"</span> <span class="s2">"./scripts/controller"</span>
+</code></pre>
+            </div>
+        </div>
+        <p>This works like a charm. I can now download all the scripts from the 7 pages with a simple loop.</p>
+
+        <h3 id="3-add-the-code-to-check-in-updates">3. add the code to check in updates</h3>
+
+        <p>If there was an update to any of the scripts, it would overwrite the previous version that was already savec
+            in <code class="language-plaintext highlighter-rouge">./scripts</code>, and this will be picked up by git. I
+            now just need to check for changes and do a <code class="language-plaintext highlighter-rouge">git commit
+                &amp;&amp; git push</code> if there are any. To make things even easier, I want a procedure that can run
+            as a GitHub action that I can trigger on a dail/weekly basis.</p>
+
+        <p>Luckily <code class="language-plaintext highlighter-rouge">bashew</code> <a
+                href="https://blog.forret.com/2022/10/15/bashew-github-action/">has a built-in function <code
+                class="language-plaintext highlighter-rouge">Gha:finish</code> for that</a>.</p>
+
+        <div class="language-bash highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code><span class="k">if </span>git diff <span class="nt">--QUIET</span> <span
+                    class="nt">--cached</span><span class="p">;</span> <span class="k">then
+  </span>IO:success <span class="s2">"No changes!                                "</span>
+<span class="k">else
+  </span>IO:success <span class="s2">"Updating changes ...                       "</span>
+  <span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="s2">"</span><span
+                        class="k">${</span><span class="nv">RUNNER_OS</span><span class="k">:-}</span><span
+                        class="s2">"</span> <span class="o">]]</span> <span class="p">;</span> <span
+                        class="k">then</span>
+    <span class="c"># not in GitHub Action</span>
+    setver auto <span class="c"># uses pforret/setver, which I have installed on all my machines</span>
+  <span class="k">else</span>
+    <span class="c"># in GitHub Action</span>
+    Gha:finish <span class="c"># uses internal bashew function</span>
+  <span class="k">fi
+fi</span>
+</code></pre>
+            </div>
+        </div>
+
+        <p>And that’s it. I’ve decided on a daily schedule for now: <a
+                href="https://github.com/pforret/glennr-unifi/actions/workflows/daily.yml"><img
+                src="https://github.com/pforret/glennr-unifi/actions/workflows/daily.yml/badge.svg" alt=""/></a></p>
+
+        <div class="language-yaml highlighter-rouge">
+            <div class="highlight"><pre class="highlight"><code><span class="c1"># .github/workflows/daily.yml</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">Daily Update</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">schedule</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">cron</span><span class="pi">:</span> <span class="s2">"</span><span
+                        class="s">15</span><span class="nv"> </span><span class="s">9</span><span
+                        class="nv"> </span><span class="s">*</span><span class="nv"> </span><span
+                        class="s">*</span><span class="nv"> </span><span class="s">*"</span>
+  <span class="na">workflow_dispatch</span><span class="pi">:</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v4</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get latest versions from glennr.nl</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">./glennr-unifi.sh get</span>
+</code></pre>
+            </div>
+        </div>
+
+    </div>
+    <div>
+
+        <a href="/category/devops" class="category">💬 devops</a>
+
+        <a href="/tag/bash" class="tag">🏷 bash</a>
+        <a href="/tag/bashew" class="tag">🏷 bashew</a>
+        <a href="/tag/unifi" class="tag">🏷 unifi</a>
+        <a href="/tag/wifi" class="tag">🏷 wifi</a>
+        <a href="/tag/github" class="tag">🏷 github</a>
+    </div>
+
+    <div class="related">
+        <h2>Also on this blog ...</h2>
+
+
+        <div>
+            <img width="80px" style="float: right"
+                 src="https://github.com/pforret/mkdox/raw/master/assets/unsplash.documents.jpg">
+            <strong><a href="/2024/03/09/mkdox-mkdocs-material-docker/"> Fastest way to set up and manage an Mkdocs
+                Material project </a></strong>
+            <small>
+                &bull; <i>09 Mar 2024</i>
+                &bull; If I wouldn’t be able to control myself, I would create a new website every week. Creating a
+                website about … any topic really, helps me structure the knowledge I have or am in the process of
+                collecting about it. The tools to create a new website have changed through...
+            </small>
+        </div>
+
+
+        <div>
+            <img width="80px" style="float: right" src="/wp-content/uploads/2023/11/unsplash.version.jpg">
+            <strong><a href="/2023/07/01/setver-semver/"> Put your (software) version in a file </a></strong>
+            <small>
+                &bull; <i>01 Jul 2023</i>
+                &bull; I’ve started using my setver bash tool for easy semver versioning of components and projects. One
+                of the design decisions I made back then, is that I would always have a VERSION.md version file in the
+                root of my project. This file only contains the current version number. This version...
+            </small>
+        </div>
+
+
+        <div>
+            <img width="80px" style="float: right" src="/wp-content/uploads/2022/10/unsplash.github.jpg">
+            <strong><a href="/2022/10/15/bashew-github-action/"> Using bashew in GitHub Actions </a></strong>
+            <small>
+                &bull; <i>15 Oct 2022</i>
+                &bull; GitHub Actions, used in countless CI/CD setups, are a good example of the ubiquity of bash
+                scripting. Most of the run: lines in an Action YML document are nothing but (a sequence of) bash command
+                lines.
+
+
+            </small>
+        </div>
+
+
+        <div>
+            <img width="80px" style="float: right" src="/wp-content/uploads/2021/04/dotenv.jpg">
+            <strong><a href="/2021/04/25/env-bash/"> Advanced dotenv config files for bash scripts </a></strong>
+            <small>
+                &bull; <i>25 Apr 2021</i>
+                &bull; A technique commonly used practice in (deployment of) software projects is to put your local
+                configuration, environment variables and secrets in a .env file in the root of your project. This .env
+                file is structured as a one-dimensional lookup table (a list of key=value lines), and saved only on
+                that...
+            </small>
+        </div>
+
+
+    </div>
+
+    <div class="footer">
+        <nav class="footer-nav">
+
+
+            <a class="xsidebar-nav-item" href="/about/"><i class="fas fa-user-alt"></i>
+                About </a>
+
+            <a class="xsidebar-nav-item" href="/archive/"><i class="fas fa-archive"></i>
+                Archive </a>
+
+            <a class="xsidebar-nav-item" href="/category/"><i class="fas fa-star"></i>
+                Categories </a>
+
+            <a class="xsidebar-nav-item" href="/tag/"><i class="fas fa-tag"></i>
+                Tags </a>
+
+            <a class="xsidebar-nav-item" href="/portfolio/"><i class="fas fa-briefcase"></i>
+                Portfolio </a>
+
+            <a class="xsidebar-nav-item" href="/search/"><i class="fas fa-search"></i>
+                Search </a>
+
+            <a class="xsidebar-nav-item" href="/social/"><i class="fas fa-power-off"></i>
+                Social Networks </a>
+
+            <a class="xsidebar-nav-item" href="/uses/"><i class="fas fa-power-off"></i>
+                Uses </a>
+
+        </nav>
+        <p class="text-center">
+            <small>
+                &copy; 2004-2024 by Peter Forret &bull; v1.4.93
+
+            </small>
+        </p>
+
+    </div>
+
+</div>
+
+<!-- Matomo -->
+<script>
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+        var u = "//stats.forret.com/";
+        _paq.push(['setTrackerUrl', u + 'matomo.php']);
+        _paq.push(['setSiteId', '1']);
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src = u + 'matomo.js';
+        s.parentNode.insertBefore(g, s);
+    })();
+</script>
+<!-- End Matomo Code -->
+<!-- 100% privacy-first analytics -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
+               referrerpolicy="no-referrer-when-downgrade"/></noscript>
+
+</body>
+</html>
