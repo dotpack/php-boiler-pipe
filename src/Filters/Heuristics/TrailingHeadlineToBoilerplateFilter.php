@@ -1,17 +1,17 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Heuristics;
+namespace Pforret\PhpArticleExtractor\Filters\Heuristics;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
-use DotPack\PhpBoilerPipe\TextBlock;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextBlock;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class TrailingHeadlineToBoilerplateFilter implements IFilter
+final class TrailingHeadlineToBoilerplateFilter implements IFilter
 {
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
-        $change = false;
+        $hasChanges = false;
 
         /**
          * @var TextBlock[] $textBlocks
@@ -23,12 +23,13 @@ class TrailingHeadlineToBoilerplateFilter implements IFilter
             if ($tb->isContent()) {
                 if ($tb->hasLabel(TextLabels::HEADING)) {
                     $tb->setIsContent(false);
-                    $change = true;
+                    $hasChanges = true;
                 } else {
                     break;
                 }
             }
         }
-        return $change;
+
+        return $hasChanges;
     }
 }

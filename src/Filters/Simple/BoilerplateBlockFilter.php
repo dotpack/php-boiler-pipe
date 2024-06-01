@@ -1,29 +1,30 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Simple;
+namespace Pforret\PhpArticleExtractor\Filters\Simple;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
 
-class BoilerplateBlockFilter implements IFilter
+final class BoilerplateBlockFilter implements IFilter
 {
-    protected $labelToKeep;
+    private string $labelToKeep;
 
-    public function __construct($labelToKeep = null)
+    public function __construct(?string $labelToKeep = null)
     {
         $this->labelToKeep = $labelToKeep;
     }
 
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
-        $changes = false;
+        $hasChanges = false;
         $textBlocks = $doc->getTextBlocks();
         foreach ($textBlocks as $tb) {
-            if (!$tb->isContent() && ($this->labelToKeep == null || !$tb->hasLabel($this->labelToKeep))) {
+            if (! $tb->isContent() && ($this->labelToKeep == null || ! $tb->hasLabel($this->labelToKeep))) {
                 $doc->removeTextBlock($tb);
-                $changes = true;
+                $hasChanges = true;
             }
         }
-        return $changes;
+
+        return $hasChanges;
     }
 }

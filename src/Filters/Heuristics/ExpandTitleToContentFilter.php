@@ -1,14 +1,14 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Heuristics;
+namespace Pforret\PhpArticleExtractor\Filters\Heuristics;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
 class ExpandTitleToContentFilter implements IFilter
 {
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
         $i = 0;
         $title = -1;
@@ -28,15 +28,19 @@ class ExpandTitleToContentFilter implements IFilter
             return false;
         }
 
-        $changes = false;
+        $hasChanges = false;
         foreach ($doc->getTextBlocks() as $key => $tb) {
-            if ($key < $title) continue;
-            if ($key > $contentStart) continue;
+            if ($key < $title) {
+                continue;
+            }
+            if ($key > $contentStart) {
+                continue;
+            }
             if ($tb->hasLabel(TextLabels::MIGHT_BE_CONTENT)) {
-                $changes = $tb->setIsContent(true) || $changes;
+                $hasChanges = $tb->setIsContent(true) || $hasChanges;
             }
         }
-        return $changes;
+
+        return $hasChanges;
     }
 }
-

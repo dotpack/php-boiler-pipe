@@ -1,30 +1,38 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Heuristics;
+namespace Pforret\PhpArticleExtractor\Filters\Heuristics;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class KeepLargestBlockFilter implements IFilter
+final class KeepLargestBlockFilter implements IFilter
 {
-    protected $labelToKeep;
+    private string $labelToKeep;
 
-    public function __construct($expandToSameLevelText, $minWords)
+    private int $minWords;
+
+    private bool $expandToSameLevelText;
+
+    public function __construct(bool $expandToSameLevelText, int $minWords)
     {
         $this->expandToSameLevelText = $expandToSameLevelText;
         $this->minWords = $minWords;
     }
 
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
         $blocks = $doc->getTextBlocks();
-        if (count($blocks) < 2) return false;
+        if (count($blocks) < 2) {
+            return false;
+        }
 
         $maxNumWords = -1;
         $largestBlock = null;
 
-        $level = -1; $i = 0; $n = -1;
+        $level = -1;
+        $i = 0;
+        $n = -1;
         foreach ($doc->getTextBlocks() as $tb) {
             $wc = $tb->getWordCount();
             if ($wc > $maxNumWords) {
@@ -54,7 +62,7 @@ class KeepLargestBlockFilter implements IFilter
                 $tl = $tb->getLevel();
                 if ($tl < $level) {
                     break;
-                } else if ($tl == $level) {
+                } elseif ($tl == $level) {
                     if ($tb->getWordCount() >= $this->minWords) {
                         $tb->setIsContent(true);
                     }
@@ -65,7 +73,7 @@ class KeepLargestBlockFilter implements IFilter
                 $tl = $tb->getLevel();
                 if ($tl < $level) {
                     break;
-                } else if ($tl == $level) {
+                } elseif ($tl == $level) {
                     if ($tb->getWordCount() >= $this->minWords) {
                         $tb->setIsContent(true);
                     }

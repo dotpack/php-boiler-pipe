@@ -1,37 +1,21 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\English;
+namespace Pforret\PhpArticleExtractor\Filters\English;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class TerminatingBlocksFinder implements IFilter
+final class TerminatingBlocksFinder implements IFilter
 {
-    protected function startWithNumber($haystack, array $needles = [])
+    public static function startWithNumber(string $haystack, string $needle): bool
     {
-        // todo
-        return false;
+        return preg_match("/^\d+$needle/", $haystack);
     }
 
-    protected function startWith($haystack, $needle)
+    public function process(TextDocument $doc): bool
     {
-        return substr($haystack, 0, strlen($needle)) === $needle;
-    }
-
-    protected function contains($haystack, $needle)
-    {
-        return strpos($haystack, $needle) > -1;
-    }
-
-    protected function equals($haystack, $needle)
-    {
-        return $haystack == $needle;
-    }
-
-    public function process(TextDocument $doc)
-    {
-        $change = false;
+        $hasChanges = false;
         foreach ($doc->getTextBlocks() as $tb) {
             $result = false;
             $wordCount = $tb->getWordCount();
@@ -40,28 +24,30 @@ class TerminatingBlocksFinder implements IFilter
                 $length = mb_strlen($text);
                 if ($length > 7) {
                     $result
-                        = ("thanks for your comments - this feedback is now closed" === $text)
-                        || $this->startWith($text, "comments")
-                        || $this->startWith($text, "© reuters")
-                        || $this->startWith($text, "please rate this")
-                        || $this->startWith($text, "post a comment")
-                        || $this->startWithNumber($text, [" comments", " users responded in"])
-                        || $this->contains($text, "what you think...")
-                        || $this->contains($text, "add your comment")
-                        || $this->contains($text, "add comment")
-                        || $this->contains($text, "reader views")
-                        || $this->contains($text, "have your say")
-                        || $this->contains($text, "reader comments")
-                        || $this->contains($text, "rätta artikeln")
-                    ;
-                } else if (1 == $tb->getLinkDensity()) {
-                    $result = ("comment" == $text);
+                        = ($text === 'thanks for your comments - this feedback is now closed')
+                        || str_starts_with($text, 'comments')
+                        || str_starts_with($text, '© reuters')
+                        || str_starts_with($text, 'please rate this')
+                        || str_starts_with($text, 'post a comment')
+                        || self::startWithNumber($text, ' comments')
+                        || self::startWithNumber($text, ' users responded in')
+                        || str_contains($text, 'what you think...')
+                        || str_contains($text, 'add your comment')
+                        || str_contains($text, 'add comment')
+                        || str_contains($text, 'reader views')
+                        || str_contains($text, 'have your say')
+                        || str_contains($text, 'reader comments')
+                        || str_contains($text, 'rätta artikeln');
+                } elseif ($tb->getLinkDensity() == 1) {
+                    $result = ($text == 'comment');
                 }
             }
-            if ($result) $tb->addLabel(TextLabels::INDICATES_END_OF_TEXT);
-            $change = $change || $result;
+            if ($result) {
+                $tb->addLabel(TextLabels::INDICATES_END_OF_TEXT);
+            }
+            $hasChanges = $hasChanges || $result;
         }
-        return $change;
+
+        return $hasChanges;
     }
 }
-

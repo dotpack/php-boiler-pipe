@@ -1,24 +1,25 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe;
+namespace Pforret\PhpArticleExtractor;
 
-use DotPack\PhpBoilerPipe\Filters\Heuristics\DocumentTitleMatchClassifier;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\TrailingHeadlineToBoilerplateFilter;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\BlockProximityFusion;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\KeepLargestBlockFilter;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\ExpandTitleToContentFilter;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\LargeBlockSameTagLevelToContentFilter;
-use DotPack\PhpBoilerPipe\Filters\Heuristics\ListAtEndFilter;
-
-use DotPack\PhpBoilerPipe\Filters\Simple\BoilerplateBlockFilter;
-
-use DotPack\PhpBoilerPipe\Filters\English\TerminatingBlocksFinder;
-use DotPack\PhpBoilerPipe\Filters\English\NumWordsRulesClassifier;
-use DotPack\PhpBoilerPipe\Filters\English\IgnoreBlocksAfterContentFilter;
+use Pforret\PhpArticleExtractor\Filters\English\IgnoreBlocksAfterContentFilter;
+use Pforret\PhpArticleExtractor\Filters\English\NumWordsRulesClassifier;
+use Pforret\PhpArticleExtractor\Filters\English\TerminatingBlocksFinder;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\BlockProximityFusion;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\DocumentTitleMatchClassifier;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\ExpandTitleToContentFilter;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\KeepLargestBlockFilter;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\LargeBlockSameTagLevelToContentFilter;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\ListAtEndFilter;
+use Pforret\PhpArticleExtractor\Filters\Heuristics\TrailingHeadlineToBoilerplateFilter;
+use Pforret\PhpArticleExtractor\Filters\Simple\BoilerplateBlockFilter;
+use Pforret\PhpArticleExtractor\Formats\HtmlContent;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
 class ArticleExtractor
 {
-    protected function process(TextDocument $doc)
+    private function process(TextDocument $doc): bool
     {
         return (new TerminatingBlocksFinder())->process($doc)
         | (new DocumentTitleMatchClassifier)->process($doc)
@@ -34,7 +35,7 @@ class ArticleExtractor
         | (new ListAtEndFilter)->process($doc);
     }
 
-    public function getContent($html)
+    final public function getContent(string $html): string
     {
         $content = new HtmlContent($html);
         $document = $content->getTextDocument();

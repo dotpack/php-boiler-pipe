@@ -1,22 +1,23 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\English;
+namespace Pforret\PhpArticleExtractor\Filters\English;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
-use DotPack\PhpBoilerPipe\TextBlock;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextBlock;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class IgnoreBlocksAfterContentFilter implements IFilter
+final class IgnoreBlocksAfterContentFilter implements IFilter
 {
-    protected $minWordCount = 0;
+    private int $minWordCount = 0;
 
-    public function __construct($minWordCount = 60)
+    public function __construct(int $minWordCount = 60)
     {
         $this->minWordCount = $minWordCount;
     }
 
-    protected function getFullTextWordCount(TextBlock $block, $minTextDensity = 9) {
+    private function getFullTextWordCount(TextBlock $block, float $minTextDensity = 9): int
+    {
         if ($block->getTextDensity() < $minTextDensity) {
             return 0;
         } else {
@@ -24,20 +25,25 @@ class IgnoreBlocksAfterContentFilter implements IFilter
         }
     }
 
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
-        $change = false;
+        $hasChanges = false;
         $wordCount = 0;
         $foundEndOfText = false;
         foreach ($doc->getTextBlocks() as $tb) {
             $endOfText = $tb->hasLabel(TextLabels::INDICATES_END_OF_TEXT);
-            if ($tb->isContent()) $wordCount += $this->getFullTextWordCount($tb);
-            if ($endOfText && $wordCount >= $this->minWordCount) $foundEndOfText = true;
+            if ($tb->isContent()) {
+                $wordCount += $this->getFullTextWordCount($tb);
+            }
+            if ($endOfText && $wordCount >= $this->minWordCount) {
+                $foundEndOfText = true;
+            }
             if ($foundEndOfText) {
-                $change = true;
+                $hasChanges = true;
                 $tb->setIsContent(false);
             }
         }
-        return $change;
+
+        return $hasChanges;
     }
 }

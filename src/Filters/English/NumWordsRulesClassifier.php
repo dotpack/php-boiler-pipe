@@ -1,12 +1,12 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\English;
+namespace Pforret\PhpArticleExtractor\Filters\English;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextBlock;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextBlock;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
 
-class NumWordsRulesClassifier implements IFilter
+final class NumWordsRulesClassifier implements IFilter
 {
     protected function classify(TextBlock $prev, TextBlock $curr, TextBlock $next)
     {
@@ -39,29 +39,28 @@ class NumWordsRulesClassifier implements IFilter
         return $curr->setIsContent($isContent);
     }
 
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
         $curr = new TextBlock();
         $next = new TextBlock();
 
-        $change = false;
+        $hasChanges = false;
         foreach ($doc->getTextBlocks() as $tb) {
             $prev = $curr;
             $curr = $next;
             $next = $tb;
-            $change = $this->classify($prev, $curr, $next) || $change;
+            $hasChanges = $this->classify($prev, $curr, $next) || $hasChanges;
         }
 
         $prev = $curr;
         $curr = $next;
         $next = new TextBlock();
-        $change = $this->classify($prev, $curr, $next) || $change;
+        $hasChanges = $this->classify($prev, $curr, $next) || $hasChanges;
 
         $prev = $curr;
         $curr = $next;
         $next = new TextBlock();
-        $change = $this->classify($prev, $curr, $next) || $change;
 
-        return $change;
+        return $this->classify($prev, $curr, $next) || $hasChanges;
     }
 }

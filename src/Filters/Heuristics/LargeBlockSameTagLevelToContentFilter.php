@@ -1,16 +1,16 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Heuristics;
+namespace Pforret\PhpArticleExtractor\Filters\Heuristics;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class LargeBlockSameTagLevelToContentFilter implements IFilter
+final class LargeBlockSameTagLevelToContentFilter implements IFilter
 {
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
-        $changes = false;
+        $hasChanges = false;
 
         $level = -1;
         foreach ($doc->getTextBlocks() as $tb) {
@@ -20,18 +20,18 @@ class LargeBlockSameTagLevelToContentFilter implements IFilter
             }
         }
 
-        if ($level == -1) return false;
+        if ($level == -1) {
+            return false;
+        }
         foreach ($doc->getTextBlocks() as $tb) {
-            if (!$tb->isContent()) {
+            if (! $tb->isContent()) {
                 if ($tb->getWordCount() >= 100 && $tb->getLevel() == $level) {
                     $tb->setIsContent(true);
-                    $changes = true;
+                    $hasChanges = true;
                 }
             }
         }
 
-        return $changes;
+        return $hasChanges;
     }
 }
-
-

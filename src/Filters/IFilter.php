@@ -1,10 +1,10 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters;
+namespace Pforret\PhpArticleExtractor\Filters;
 
-use DotPack\PhpBoilerPipe\TextDocument;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
 
 interface IFilter
 {
-    public function process(TextDocument $doc);
+    public function process(TextDocument $doc): bool;
 }

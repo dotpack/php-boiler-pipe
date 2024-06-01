@@ -1,16 +1,16 @@
 <?php
 
-namespace DotPack\PhpBoilerPipe\Filters\Heuristics;
+namespace Pforret\PhpArticleExtractor\Filters\Heuristics;
 
-use DotPack\PhpBoilerPipe\Filters\IFilter;
-use DotPack\PhpBoilerPipe\TextDocument;
-use DotPack\PhpBoilerPipe\TextLabels;
+use Pforret\PhpArticleExtractor\Filters\IFilter;
+use Pforret\PhpArticleExtractor\Formats\TextDocument;
+use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class ListAtEndFilter implements IFilter
+final class ListAtEndFilter implements IFilter
 {
-    public function process(TextDocument $doc)
+    public function process(TextDocument $doc): bool
     {
-        $changes = false;
+        $hasChanges = false;
 
         $level = PHP_INT_MAX;
         foreach ($doc->getTextBlocks() as $tb) {
@@ -24,14 +24,13 @@ class ListAtEndFilter implements IFilter
                     $tb->getLinkDensity() == 0
                 ) {
                     $tb->setIsContent(true);
-                    $changes = true;
+                    $hasChanges = true;
                 } else {
                     $level = PHP_INT_MAX;
                 }
             }
         }
 
-        return $changes;
+        return $hasChanges;
     }
 }
-
