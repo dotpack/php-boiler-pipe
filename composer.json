@@ -1,5 +1,6 @@
 {
-  "name": "dotpack/php-boiler-pipe",
+  "name": "pforret/php-article-extractor",
+  "version": "0.1.0",
   "description": "PhpArticleExtractor. Boilerplate Removal and Fulltext Extraction from HTML pages",
   "license": "MIT",
   "keywords": [
@@ -38,7 +39,5 @@
   "scripts": {
     "test": "phpunit --testdox",
     "format": "pint"
-
-  },
-  "version": "0.1.0"
+  }
 }
