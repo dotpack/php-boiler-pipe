@@ -41,7 +41,7 @@ final class ArticleExtractorTest extends TestCase
         $extractor = new ArticleExtractor();
         $content = $extractor->getContent($html);
         $this->assertEquals('Humanitarian aid in the Middle East Mess', substr($content, 0, 40));
-        $this->assertEquals(564 , strlen($content));
+        $this->assertEquals(564, strlen($content));
 
     }
 
@@ -52,7 +52,7 @@ final class ArticleExtractorTest extends TestCase
         $content = $extractor->getContent($html);
         $this->assertEquals('I recently upgraded my Ubiquiti Wi-Fi in', substr($content, 0, 40));
         $this->assertStringContainsString('Cloud Key Gen 2', $content);
-        $this->assertEquals(4242 , strlen($content));
+        $this->assertEquals(4242, strlen($content));
 
     }
 
@@ -63,7 +63,7 @@ final class ArticleExtractorTest extends TestCase
         $content = $extractor->getContent($html);
         $this->assertEquals('This is part 2 in the “what’s new in', substr($content, 0, 40));
         $this->assertStringContainsString('override the terminal size', $content);
-        $this->assertEquals(5002 , strlen($content));
+        $this->assertEquals(5002, strlen($content));
 
     }
 
@@ -74,7 +74,7 @@ final class ArticleExtractorTest extends TestCase
         $content = $extractor->getContent($html);
         $this->assertEquals('I hope the examples above have opened yo', substr($content, 0, 40));
         $this->assertStringContainsString('Google Docs, AdSense', $content);
-        $this->assertEquals(2607 , strlen($content));
+        $this->assertEquals(2607, strlen($content));
 
     }
 }

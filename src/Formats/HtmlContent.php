@@ -33,7 +33,37 @@ class HtmlContent
         'h3' => [TextLabels::HEADING, TextLabels::H3],
     ];
 
-    protected function node(\DOMNode $element, int $level = 0, bool $isAnchor = false)
+    public function __construct(string $html)
+    {
+        $html = preg_replace('/<(span)(.*?)>/', '', $html);
+        $html = preg_replace('/<\/(span)>/', '', $html);
+
+        $this->textDocument = new TextDocument();
+
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        libxml_clear_errors();
+        $this->node($dom->documentElement);
+
+        if ($this->textBlock) {
+            $this->textDocument->addTextBlock($this->textBlock);
+        }
+        $this->textDocument->setTitle($this->title);
+    }
+
+    final public function getTextDocument(): TextDocument
+    {
+        return $this->textDocument;
+    }
+
+    public function getImages(): array
+    {
+        $images = [];
+        return $images;
+    }
+
+    private function node(\DOMNode $element, int $level = 0, bool $isAnchor = false): void
     {
         $tag = null;
         if ($element->nodeType == XML_ELEMENT_NODE) {
@@ -70,29 +100,5 @@ class HtmlContent
                 $this->node($node, $level + 1, $isAnchor);
             }
         }
-    }
-
-    public function __construct(string $html)
-    {
-        $html = preg_replace('/<(span)(.*?)>/', '', $html);
-        $html = preg_replace('/<\/(span)>/', '', $html);
-
-        $this->textDocument = new TextDocument();
-
-        $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML($html);
-        libxml_clear_errors();
-        $this->node($dom->documentElement);
-
-        if ($this->textBlock) {
-            $this->textDocument->addTextBlock($this->textBlock);
-        }
-        $this->textDocument->setTitle($this->title);
-    }
-
-    final public function getTextDocument(): TextDocument
-    {
-        return $this->textDocument;
     }
 }

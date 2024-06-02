@@ -13,11 +13,12 @@ use Pforret\PhpArticleExtractor\Filters\Heuristics\LargeBlockSameTagLevelToConte
 use Pforret\PhpArticleExtractor\Filters\Heuristics\ListAtEndFilter;
 use Pforret\PhpArticleExtractor\Filters\Heuristics\TrailingHeadlineToBoilerplateFilter;
 use Pforret\PhpArticleExtractor\Filters\Simple\BoilerplateBlockFilter;
+use Pforret\PhpArticleExtractor\Formats\ArticleContents;
 use Pforret\PhpArticleExtractor\Formats\HtmlContent;
 use Pforret\PhpArticleExtractor\Formats\TextDocument;
 use Pforret\PhpArticleExtractor\Naming\TextLabels;
 
-class ArticleExtractor
+final class ArticleExtractor
 {
     private function process(TextDocument $doc): bool
     {
@@ -35,7 +36,7 @@ class ArticleExtractor
         | (new ListAtEndFilter)->process($doc);
     }
 
-    final public function getContent(string $html): string
+    public function getContent(string $html): string
     {
         $content = new HtmlContent($html);
         $document = $content->getTextDocument();
@@ -43,5 +44,20 @@ class ArticleExtractor
         $this->process($document);
 
         return $document->getContent();
+    }
+
+    public function getArticle(string $html): ArticleContents
+    {
+        $content = new HtmlContent($html);
+        $document = $content->getTextDocument();
+
+        $this->process($document);
+
+        $article = new ArticleContents();
+        $article->title = $document->getTitle();
+        $article->content = $document->getContent();
+        $article->images = $content->getImages();
+
+        return $article;
     }
 }
