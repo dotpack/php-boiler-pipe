@@ -6,6 +6,6 @@
 [![Total Downloads](https://poser.pugx.org/pforret/php-article-extractor/d/total.png)](https://packagist.org/packages/pforret/php-article-extractor)
 
 Boilerplate Removal and Fulltext Extraction from HTML pages.
-Rewrite of dotpack/php-boiler-pipe for PHP8
+Rewrite of `dotpack/php-boiler-pipe` for ^PHP8.2
 
 ![](assets/unsplash.squeeze.jpg)
