@@ -2,7 +2,7 @@
 
 ## Project Archived
 
-This project is no longer maintained. Please refer to [pforret/php-article-extractor](https://github.com/pforret/php-article-extractor) for further updates and continued development.
+This project is no longer maintained. Please refer to [pforret/pf-article-extractor](https://github.com/pforret/pf-article-extractor) for further updates and continued development.
 
 Thank you for your support!
 
