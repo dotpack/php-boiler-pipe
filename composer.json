@@ -39,5 +39,6 @@
     "test": "phpunit --testdox",
     "format": "pint"
 
-  }
+  },
+  "version": "0.1.0"
 }
