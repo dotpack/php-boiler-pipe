@@ -1,6 +1,6 @@
 {
   "name": "pforret/php-article-extractor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "PhpArticleExtractor. Boilerplate Removal and Fulltext Extraction from HTML pages",
   "license": "MIT",
   "keywords": [
